@@ -60,38 +60,13 @@ class Manager(object):
                     # because there is a chance of getting
                     # a key error when trying to access
                     # a block which does not actually exist
-                    try:
-                        field[str(int(x_key) - block_size)][str(int(y_key))]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key) + block_size)][str(int(y_key))]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key) - block_size)][str(int(y_key) - block_size)]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key))][str(int(y_key) - block_size)]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key) + block_size)][str(int(y_key) - block_size)]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key) - block_size)][str(int(y_key) + block_size)]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key))][str(int(y_key) + block_size)]['num'] += 1
-                    except KeyError:
-                        pass
-                    try:
-                        field[str(int(x_key) + block_size)][str(int(y_key) + block_size)]['num'] += 1
-                    except KeyError:
-                        pass
+                    for x in range(-1, 2):
+                        for y in range(-1, 2):
+                            if x == y == 0: continue
+                            try:
+                                field[str(int(x_key) + x*block_size)][str(int(y_key) + y*block_size)]['num'] += 1
+                            except KeyError:
+                                pass
         return field
 
     def get_field(self) -> dict:

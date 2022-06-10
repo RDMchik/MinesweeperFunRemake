@@ -1,3 +1,4 @@
+from tkinter import Y
 from scr.configuration import Config
 from scr.manager import Manager
 from scr.gui import GUI, Sprite
@@ -30,6 +31,8 @@ display = pygame.display.set_mode((
 
 pygame.display.set_caption('Minesweeper')
 
+sprites_nums = ['','one','two','three','four','five','six','seven','eight']
+
 # initialization of all the sprites
 sprites = {
     'block': pygame.transform.scale(pygame.image.load('static/block.jpg').convert_alpha(),
@@ -37,24 +40,15 @@ sprites = {
     'flag': pygame.transform.scale(pygame.image.load('static/flag.png').convert_alpha(),
     (conf()['block_size'], conf()['block_size'])),
     'bomb': pygame.transform.scale(pygame.image.load('static/bomb.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'one': pygame.transform.scale(pygame.image.load('static/block_one.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'two': pygame.transform.scale(pygame.image.load('static/block_two.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'three': pygame.transform.scale(pygame.image.load('static/block_three.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'four': pygame.transform.scale(pygame.image.load('static/block_four.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'five': pygame.transform.scale(pygame.image.load('static/block_five.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'six': pygame.transform.scale(pygame.image.load('static/block_six.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'seven': pygame.transform.scale(pygame.image.load('static/block_seven.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
-    'eight': pygame.transform.scale(pygame.image.load('static/block_eight.png').convert_alpha(),
-    (conf()['block_size'], conf()['block_size'])),
+    (conf()['block_size'], conf()['block_size']))
 }
+for num in sprites_nums:
+    if num == '': continue
+
+    sprites[num] = pygame.transform.scale(
+        pygame.image.load('static/block_{}.png'.format(num)).convert_alpha(), 
+        (conf()['block_size'], conf()['block_size'])
+    )
 
 # initialization of all the sounds
 sounds = {
@@ -84,22 +78,8 @@ def complete_visual_field() -> None:
                 sprite.add_sub_sprite(sprites['bomb'])
             # the maximum amount of bombs
             # around a single block is eight
-            elif y_value['num'] == 1:
-                sprite.add_sub_sprite(sprites['one'])
-            elif y_value['num'] == 2:
-                sprite.add_sub_sprite(sprites['two'])
-            elif y_value['num'] == 3:
-                sprite.add_sub_sprite(sprites['three'])
-            elif y_value['num'] == 4:
-                sprite.add_sub_sprite(sprites['four'])
-            elif y_value['num'] == 5:
-                sprite.add_sub_sprite(sprites['five'])
-            elif y_value['num'] == 6:
-                sprite.add_sub_sprite(sprites['six'])
-            elif y_value['num'] == 7:
-                sprite.add_sub_sprite(sprites['seven'])
-            elif y_value['num'] == 8:
-                sprite.add_sub_sprite(sprites['eight'])
+            if y_value['num'] > 0 and y_value['num'] < 9:
+                sprite.add_sub_sprite(sprites[sprites_nums[y_value['num']]])
             gui.add_sprite(sprite)
 
 complete_visual_field()
@@ -140,46 +120,15 @@ def check_zero_block(coordinates: tuple) -> None:
     # code is going to try and perform
     # the check_zero_block on all eight
     # surrounding blocks' coordinates
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] - conf()['block_size']))][str(int(coordinates[1]))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] + conf()['block_size']))][str(int(coordinates[1]))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] - conf()['block_size']))][str(int(coordinates[1] - conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0]))][str(int(coordinates[1] - conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] + conf()['block_size']))][str(int(coordinates[1] - conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] - conf()['block_size']))][str(int(coordinates[1] + conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0]))][str(int(coordinates[1] + conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
-    try:
-        new_block = manager.get_field()[str(int(coordinates[0] + conf()['block_size']))][str(int(coordinates[1] + conf()['block_size']))]
-        check_zero_block((new_block['x'], new_block['y']))
-    except KeyError:
-        pass
+
+    for x in range(-1, 2):
+        for y in range(-1, 2):
+            if x == y == 0: continue
+            try:
+                new_block = manager.get_field()[str(int(coordinates[0] + x*conf()['block_size']))][str(int(coordinates[1] + y*conf()['block_size']))]
+                check_zero_block((new_block['x'], new_block['y']))
+            except KeyError:
+                pass
 
 def restart() -> None:
     """restart the whole game"""
@@ -230,11 +179,14 @@ while True:
             if hovered:
                 block = manager.get_field()[str(int(sprite.coordinates[0]))][str(int(sprite.coordinates[1]))]
                 if clicks[0]:
+                    if block['marked']:
+                        continue
                     sounds['num'].play()
                     check_zero_block((block['x'], block['y']))
                     sprite.sub_sprites_visible = True
                     sprite.can_collide = False
                     score += block['num']
+                    sprite.forced_sub_sprites.clear()
                     # sprite is right clicked
                     if block['is_bomb']:
                         # lose if the block is bomb
@@ -253,7 +205,6 @@ while True:
                                 sprite.can_collide = False
                         gui.draw_all_visuals(str(score), str(time_played))
                         gui.update_footer(str(score), str(time_played), 'lost :(')
-
                 elif clicks[1]:
                     if not sprite.sub_sprites_visible:
                         if not block['marked']:
