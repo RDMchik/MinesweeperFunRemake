@@ -1,0 +1,9 @@
+{
+    "field_size_x": 10,
+    "field_size_y": 10,
+    "block_size": 60,
+    "bombs_amount": 3,
+    "footer_height": 60,
+    "border_width": 3,
+    "fps": 30
+}
