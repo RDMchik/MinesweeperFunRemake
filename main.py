@@ -239,7 +239,6 @@ while True:
                     if block['is_bomb']:
                         # lose if the block is bomb
                         running = False
-                        gui.update_footer(str(score), str(time_played), 'lost :(')
                         try:
                             sounds['num'].stop()
                         except Exception:
@@ -253,6 +252,7 @@ while True:
                                 sprite.sub_sprites_visible = True
                                 sprite.can_collide = False
                         gui.draw_all_visuals(str(score), str(time_played))
+                        gui.update_footer(str(score), str(time_played), 'lost :(')
 
                 elif clicks[1]:
                     if not sprite.sub_sprites_visible:
@@ -263,7 +263,6 @@ while True:
                                 # all of the mines are covered with flags
                                 # so the player has won
                                 running = False
-                                gui.update_footer(str(score), str(time_played), 'won :)')
                                 try:
                                     sounds['flag'].stop()
                                 except Exception:
@@ -277,6 +276,7 @@ while True:
                                         sprite.sub_sprites_visible = True
                                         sprite.can_collide = False
                                 gui.draw_all_visuals(str(score), str(time_played))
+                                gui.update_footer(str(score), str(time_played), 'won :)')
                         else:
                             manager.set_key((block['x'], block['y']), 'marked', False)
                             sprite.forced_sub_sprites.pop(-1)
