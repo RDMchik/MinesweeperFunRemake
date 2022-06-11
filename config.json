@@ -1,8 +1,8 @@
 {
-    "field_size_x": 10,
-    "field_size_y": 10,
-    "block_size": 50,
-    "bombs_amount": 10,
+    "field_size_x": 30,
+    "field_size_y": 30,
+    "block_size": 30,
+    "bombs_amount": 150,
     "footer_height": 60,
     "border_width": 3,
     "fps": 30
